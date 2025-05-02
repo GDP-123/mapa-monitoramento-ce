@@ -1,0 +1,39 @@
+[
+    {
+      "nome": "João da Silva",
+      "faccao": "Facção A",
+      "regiao": "Norte",
+      "cidade": "Sobral",
+      "cargo": "Gerente",
+      "foto": "C://Users//gustavo.silva.POLICIACIVIL//Desktop//Code//Em desenvolvimento//MapFaccoes//ceara-crime-dashboard//image//anonymous.jpg",
+      "possui_mandado": true,
+      "quantidade_mandados": 2,
+      "data_nascimento": "1985-03-14",
+      "ultima_atualizacao": "2025-04-29"
+    },
+    {
+      "nome": "Carlos Souza",
+      "faccao": "Facção B",
+      "regiao": "Metropolitana",
+      "cidade": "Fortaleza",
+      "cargo": "Líder",
+      "foto": "C://Users//gustavo.silva.POLICIACIVIL//Desktop//Code//Em desenvolvimento//MapFaccoes//ceara-crime-dashboard//image//anonymous.jpg",
+      "possui_mandado": false,
+      "quantidade_mandados": 0,
+      "data_nascimento": "1990-07-21",
+      "ultima_atualizacao": "2025-04-29"
+    },
+    {
+      "nome": "Cesar Figueredo",
+      "faccao": "Facção B",
+      "regiao": "Metropolitana",
+      "cidade": "Fortaleza",
+      "cargo": "Frente",
+      "foto": "C://Users//gustavo.silva.POLICIACIVIL//Desktop//Code//Em desenvolvimento//MapFaccoes//ceara-crime-dashboard//image//anonymous.jpg",
+      "possui_mandado": true,
+      "quantidade_mandados": 1,
+      "data_nascimento": "1987-14-20",
+      "ultima_atualizacao": "2025-04-29"
+    }
+  ]
+
