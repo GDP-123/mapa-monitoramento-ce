@@ -1,6 +1,7 @@
 import streamlit as st
 
 from streamlit_folium import st_folium
+from pathlib import Path
 
 from functions import *
 
@@ -24,6 +25,9 @@ st.markdown(
 df,dados, ce_geo = load_data()
 # Inicializa DB
 init_db()
+
+#definindo diretório base
+base_dir = Path(__file__).parent
 
 # Interface da barra lateral
 with st.sidebar:
@@ -106,7 +110,9 @@ with col2:
                             col1, col2 = st.columns([1, 2])
                             
                             with col1:
-                                st.image(dados.foto, width=280)
+                                foto_path = base_dir / dados.foto  # dados.foto = "imagem/anonymous.jpg"
+                                st.image(foto_path, width=280)
+                                #st.image(dados.foto, width=280)
                             
                             with col2:
                                 st.markdown(f"**Nome:** {dados.nome}")
