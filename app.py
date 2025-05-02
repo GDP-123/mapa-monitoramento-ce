@@ -48,7 +48,8 @@ with st.sidebar:
 # Título
 cc1, cc2 = st.columns([1, 3])
 with cc1:
-    st.image("image\\logo.png", width=100)
+    #st.image("image\\logo.png", width=100)
+    pass
 with cc2:
     st.title("PAINEL DE LIDERANÇAS CRIMINOSAS - CEARÁ")
 
