@@ -1,7 +1,7 @@
 streamlit
 pandas
 folium
-streamlit-folium>=0.10
+streamlit-folium
 shapely
 streamlit-image-viewer
 sqlite3
