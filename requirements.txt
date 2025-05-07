@@ -1,7 +1,9 @@
-streamlit>=1.32.0
-pandas>=2.0.0
-folium>=0.14.0
-streamlit-folium>=0.10.0
-shapely>=2.0.0
-streamlit-image-viewer>=1.0.0
-sqlite3>=3.0.0  # (Normalmente já vem com Python)
+streamlit
+pandas
+folium
+streamlit-folium>=0.10
+shapely
+streamlit-image-viewer
+sqlite3
+
+
