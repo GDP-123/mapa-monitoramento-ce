@@ -5,5 +5,3 @@ streamlit-folium>=0.10
 shapely
 streamlit-image-viewer
 sqlite3
-
-
