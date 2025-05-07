@@ -1,39 +1,67 @@
 [
     {
+      "id":0,
       "nome": "João da Silva",
       "faccao": "Facção A",
-      "regiao": "Norte",
-      "cidade": "Sobral",
+      "regiao": ["Norte"],
+      "cidade": ["Sobral"],
       "cargo": "Gerente",
-      "foto": "anonymous.jpg",
+      "foto": "image/anonymous.jpg",
       "possui_mandado": true,
       "quantidade_mandados": 2,
       "data_nascimento": "1985-03-14",
-      "ultima_atualizacao": "2025-04-29"
+      "ultima_atualizacao": "2025-04-29",
+      "analista_info": "Essa pessoa rasgou a camisa, passando de GDE para PCC",
+      "fonte": "Relatório Técnico 14/2025",
+      "status": "Foragido"
     },
     {
+      "id":1,
+      "nome": "Fernando Fernandes",
+      "faccao": "Facção A",
+      "regiao": ["Norte"],
+      "cidade": ["Sobral"],
+      "cargo": "Frente",
+      "foto": "image/anonymous.jpg",
+      "possui_mandado": true,
+      "quantidade_mandados": 1,
+      "data_nascimento": "1977-10-25",
+      "ultima_atualizacao": "2025-04-29",
+      "analista_info": "Responsável por enviar dinheiro para o chefe no RJ",
+      "fonte": "Relatório Técnico 14/2025",
+      "status": "Foragido"
+    },
+    {
+      "id":2,
       "nome": "Carlos Souza",
       "faccao": "Facção B",
-      "regiao": "Metropolitana",
-      "cidade": "Fortaleza",
+      "regiao": ["Norte","Norte","Norte"],
+      "cidade": ["Itapipoca", "Amontada", "Trairi"],
       "cargo": "Líder",
-      "foto": "anonymous.jpg",
+      "foto": "image/anonymous.jpg",
       "possui_mandado": false,
       "quantidade_mandados": 0,
       "data_nascimento": "1990-07-21",
-      "ultima_atualizacao": "2025-04-29"
+      "ultima_atualizacao": "2025-04-29",
+      "analista_info": "Essa pessoa rasgou a camisa, passando de GDE para PCC",
+      "fonte": "Inquérito 432-168/2024",
+      "status": "Monitoramento Eletrônico"
     },
     {
+      "id":3,
       "nome": "Cesar Figueredo",
       "faccao": "Facção B",
-      "regiao": "Metropolitana",
-      "cidade": "Fortaleza",
+      "regiao": ["Metropolitana"],
+      "cidade": ["Fortaleza"],
       "cargo": "Frente",
-      "foto": "anonymous.jpg",
+      "foto": "image/anonymous.jpg",
       "possui_mandado": true,
       "quantidade_mandados": 1,
       "data_nascimento": "1987-14-20",
-      "ultima_atualizacao": "2025-04-29"
+      "ultima_atualizacao": "2025-04-29",
+      "analista_info": "Essa pessoa rasgou a camisa, passando de GDE para PCC",
+      "fonte": "Dado levanto pela DRACO",
+      "status": "Recolhido"
     }
   ]
 
