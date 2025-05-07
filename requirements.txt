@@ -3,5 +3,5 @@ pandas
 folium
 streamlit-folium
 shapely
-streamlit-image-viewer
+#streamlit-image-viewer
 sqlite3
