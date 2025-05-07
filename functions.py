@@ -2,19 +2,21 @@ import folium, json, sqlite3
 import pandas as pd
 import streamlit as st
 
+
 from shapely.geometry import shape, Point
 from collections import defaultdict
 from folium import LayerControl
 from folium.features import GeoJsonTooltip
 from datetime import datetime
 
-def camada_colirada(dados,m,ce_geo):
+def camada_colorida(dados, m, ce_geo):
     # Cria o dicionário cidade -> lista de facções
     cidade_faccao = defaultdict(list)
     for pessoa in dados:
-        cidade = pessoa['cidade']
-        faccao = pessoa['faccao']
-        cidade_faccao[cidade].append(faccao)
+        # Agora pessoa['cidade'] é uma lista, então iteramos sobre cada cidade
+        for cidade in pessoa['cidade']:
+            faccao = pessoa['faccao']
+            cidade_faccao[cidade].append(faccao)
 
     # Opcional: converter para dict comum se não quiser usar defaultdict
     cidade_faccao = dict(cidade_faccao)
@@ -29,7 +31,7 @@ def camada_colirada(dados,m,ce_geo):
         # Pegar a facção mais comum
         faccao_predominante[cidade] = max(contagem.items(), key=lambda x: x[1])[0]
 
-    # Cores para cada facção
+    # Cores para cada facção (mantive suas cores originais)
     cores_faccoes = {
         "Facção A": "red",
         "Facção B": "blue",
@@ -66,11 +68,15 @@ def camada_colirada(dados,m,ce_geo):
                 'weight': 0.5,
                 'fillOpacity': 0.6
             },
-            tooltip=GeoJsonTooltip(fields=['name'], aliases=['Cidade:'])
+            tooltip=GeoJsonTooltip(
+                fields=['name'], 
+                aliases=['Cidade:'],
+                labels=True
+            )
         ).add_to(m)
 
     # Adicionar controle de camadas
-    LayerControl().add_to(m)
+    folium.LayerControl().add_to(m)
 
     return m
 
@@ -102,6 +108,12 @@ def encontrar_cidade_por_coordenada(lat, lng, geojson):
         if poligono.contains(ponto):
             return feature["properties"]["name"]  # ou outro campo que quiser
     return None
+
+# Função para mostrar/ocultar a mensagem
+def toggle_mensagem():
+    if 'mostrar_mensagem' not in st.session_state:
+        st.session_state.mostrar_mensagem = False
+    st.session_state.mostrar_mensagem = not st.session_state.mostrar_mensagem
 
 @st.cache_data
 def load_data():
