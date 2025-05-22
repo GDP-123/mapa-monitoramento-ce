@@ -1,6 +1,7 @@
 streamlit
-pandas
 folium
 streamlit-folium
-shapely
 streamlit-image-viewer
+pandas
+shapely
+python-docx
