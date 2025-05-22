@@ -160,8 +160,8 @@ with col2: #Informações
                             col1, col2, col3 = st.columns([1, 2, 0.2])
                             
                             with col1: #Foto
-                                foto_path = base_dir / dados.foto  # dados.foto = "imagem/anonymous.jpg"
-                                st.image(foto_path, width=280)
+                                #foto_path = base_dir / dados.foto  # dados.foto = "imagem/anonymous.jpg"
+                                #st.image(foto_path, width=280)
                                 st.caption(f"🕒 Última atualização: {dados.ultima_atualizacao}")
 
                             with col2: #Dados
