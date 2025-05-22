@@ -1,4 +1,5 @@
 import streamlit as st
+import io
 
 from streamlit_folium import st_folium
 from streamlit_image_viewer import image_viewer
@@ -6,6 +7,20 @@ from pathlib import Path
 
 from functions import *
 
+# INICIALIZAR DB
+init_db()
+# CARREGAR DADOS
+df,dados, ce_geo = load_data()
+# DEFINIR DIRETÓRIO BASE
+base_dir = Path(__file__).parent
+# DEFINIR FACÇÕES
+cores_faccoes = {
+        "Facção A": "red",
+        "Facção B": "blue",
+        "Facção C": "blue",
+        "Facção D": "blue",
+        "Facção E": "blue",
+    }
 
 # Reduzir margens com CSS
 st.markdown(
@@ -15,20 +30,9 @@ st.markdown(
     .block-container {
         max-width: 92%;
     }
-
-    </style>
     """,
     unsafe_allow_html=True
 )
-
-
-# Carregar dados
-df,dados, ce_geo = load_data()
-# Inicializa DB
-init_db()
-
-#definindo diretório base
-base_dir = Path(__file__).parent
 
 # Interface da barra lateral
 with st.sidebar:
@@ -39,56 +43,53 @@ with st.sidebar:
 
 
 # Título
-cc1, cc2 = st.columns([1, 3])
+cc1, cc2, cc3 = st.columns([1, 4, 1])
 with cc1:
-    #st.image("image\\logo.png", width=100)
+    #st.image("image\\logo.png", width=210)
     pass
 with cc2:
-    st.title("PAINEL DE LIDERANÇAS CRIMINOSAS - CEARÁ")
+    st.markdown("<h1 style='text-align:center'> PAINEL DE LIDERANÇAS CRIMINOSAS - CEARÁ</h1>", unsafe_allow_html=True)
+    col111, col222, col333 = st.columns([1,2,1])
+    with col111:
+        st.markdown("<h3 style='text-align:center'> Alvos catalogados</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='text-align:center'>{len(df):,}</h3>", unsafe_allow_html=True)
 
-# Exemplo: inserir notificações manualmente para testes
-#with st.expander("Adicionar nova notificação"):
-#    nova_msg = st.text_area("Mensagem da notificação")
-#    if st.button("Adicionar"):
-#        if nova_msg.strip():
-#            adicionar_notificacao(nova_msg.strip())
-#            st.success("Notificação adicionada!")
-#            st.experimental_user()
-#        else:
-#            st.error("A mensagem não pode estar vazia.")
+    with col222:
+        st.markdown("<h3 style='text-align:center'> Com mandado em aberto</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='text-align:center'>{df['possui_mandado'].sum():,}</h3>", unsafe_allow_html=True)
 
-col111, col222, col333 = st.columns(3)
-with col111:
-    st.markdown("<h3 style='text-align:center'> Alvos catalogados</h3>", unsafe_allow_html=True)
-    st.markdown(f"<h2 style='text-align:center'>{len(df):,}</h2>", unsafe_allow_html=True)
-
-with col222:
-    st.markdown("<h3 style='text-align:center'> Com mandado em aberto</h3>", unsafe_allow_html=True)
-    st.markdown(f"<h2 style='text-align:center'>{df['possui_mandado'].sum():,}</h2>", unsafe_allow_html=True)
-
-with col333:
-    st.markdown("<h3 style='text-align:center'>Cidades mapeadas</h3>", unsafe_allow_html=True)
-    #st.markdown(f"<h2 style='text-align:center'>{df['cidade'].nunique()}</h2>", unsafe_allow_html=True) -----------------AQUI
-
-
+    with col333:
+        st.markdown("<h3 style='text-align:center'>Cidades mapeadas</h3>", unsafe_allow_html=True)
+        #st.markdown(f"<h2 style='text-align:center'>{df['cidade'].nunique()}</h2>", unsafe_allow_html=True) -----------------AQUI
+with cc3:
+    #st.image("image\\logo.png", width=210)
+    pass
 
 # Layout com duas colunas: mapa à esquerda, dados à direita
-col1, col2 = st.columns([1, 1])  # proporção 2:1
-
+col1, col2 = st.columns([1, 1]) 
 with col1: #Mapa
+    # Usar um form para agrupar os checkboxes
+    with st.form("faccoes_form",border=False):
+        cols = st.columns(len(cores_faccoes))
+        faccoes_selecionadas = []
+        
+        for i, (faccao, cor) in enumerate(cores_faccoes.items()):
+            with cols[i]:
+                if st.checkbox(faccao, value=True, key=f"check_{faccao}"):
+                    faccoes_selecionadas.append(faccao)
+        
+        # Botão para aplicar as seleções
+        aplicado = st.form_submit_button("Aplicar Filtros")
+
+    # Só atualiza o mapa quando o botão for clicado
+    if aplicado:
+        st.session_state.faccoes_selecionadas = faccoes_selecionadas
+
     # Criar o mapa
-    st.write("Use o controle no canto superior direito do mapa para mostrar/ocultar facções")
     m = folium.Map(location=[-5.2, -39.5], zoom_start=7)
-
-    # Adicionar camada GeoJson
-    geojson_layer = camada_amarela(ce_geo, m)
-    
-    # Adicionar coress das faccoes
-    #m = camada_colirada(dados,m,ce_geo) -----------------AQUI
-    m = camada_colorida(dados,m,ce_geo)
-
-    # Mostrar mapa e capturar clique
-    mapa_data = st_folium(m, width=800, height=600, returned_objects=["last_object_clicked"])
+    camada_amarela(ce_geo, m)
+    m = poligonos_coloridos(cores_faccoes, dados, m, st.session_state.get('faccoes_selecionadas', list(cores_faccoes.keys())))
+    mapa_data = st_folium(m, width=900, height=600, returned_objects=["last_object_clicked"])
 
 with col2: #Informações
     try:
@@ -100,27 +101,62 @@ with col2: #Informações
             clicked_city = encontrar_cidade_por_coordenada(lat, lng, ce_geo)
 
             if clicked_city:
-                #pegando os dados da região clicada pelo usuário
-                #st.subheader(f"Membro(s) de ORCRIM em {clicked_city}")
-                #liderancas = df[df['cidade'].str.lower() == clicked_city.lower()]
-                if clicked_city:
-                    st.subheader(f"Membro(s) de ORCRIM em {clicked_city.title()}")
-                    
-                    # Função de filtro segura
-                    def contem_cidade(cidades_lista, cidade_alvo):
-                        if not isinstance(cidades_lista, list):  # Caso algum valor não seja lista
-                            return False
-                        return any(cidade_alvo.lower() == c.lower() for c in cidades_lista)
-                    
-                    liderancas = df[df['cidade'].apply(
-                        lambda c: contem_cidade(c, clicked_city)
-                    )]
+                #Define qual cidade foi clicada
+                liderancas = df[df['cidade'].apply(lambda c: contem_cidade(c, clicked_city))]
                 
+                #Cria cabeçalho
+                col1111, col2222 = st.columns([2,0.4])
+                with col1111:
+                    st.markdown(f"<h2 style='text-align:center'> Membro(s) de ORCRIM em {clicked_city.title()}</h2><br>", unsafe_allow_html=True)
+
+                #Botão para gerar relatório
+                with col2222:
+                    
+                    #st.subheader("Gerar Relatório")       
+                    if not liderancas.empty:
+                        # listando as lideranaças da facção específica escolhida pelo usuário
+                        liderancas_filtradas = liderancas[liderancas['faccao'].isin(st.session_state.faccoes_selecionadas)]
+                        liderancas_filtradas = liderancas_filtradas.sort_values(by='nome')
+
+                        docx = gerar_documento(
+                            modelo_path='Modelo/Modelo.docx',
+                            regiao=clicked_city.title(),
+                            dados_tabela=liderancas_filtradas
+                        )
+
+                        # 2. Salva o documento em um buffer
+                        buffer = io.BytesIO()
+                        docx.save(buffer)
+                        buffer.seek(0)  # Importante: reposiciona o ponteiro para o início do arquivo
+                        
+                        # 3. Download no Streamlit
+                        st.download_button(
+                            label="📄 DOCX",
+                            data=buffer,
+                            file_name=f"relatorio_{clicked_city}.docx",
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                            icon=":material/download:",
+                        )
+                    else:
+                        pass
+                        #st.warning("Nenhum dado encontrado para gerar o relatório.")
                 
-                if not liderancas.empty:
-                    # Criando um container com altura fixa e barra de rolagem
-                    with st.container(height=585):  # Ajuste a altura conforme necessário
-                        for _, dados in liderancas.iterrows():
+            if not liderancas.empty:
+                
+                # listando as lideranaças da facção específica escolhida pelo usuário
+                liderancas_filtradas = liderancas[liderancas['faccao'].isin(st.session_state.faccoes_selecionadas)]
+
+                # Criando um container com altura fixa e barra de rolagem
+                with st.container(height=605):  # Ajuste a altura conforme necessário
+
+                    if liderancas_filtradas.empty:
+                        st.warning("Nenhuma liderança encontrada para as facções selecionadas.")
+                    else:
+                        #ordernar em ordem alfabética
+                        liderancas_filtradas = liderancas_filtradas.sort_values(by='nome')
+                        
+                        #mostrando os dados
+                        for _, dados in liderancas_filtradas.iterrows():
                             col1, col2, col3 = st.columns([1, 2, 0.2])
                             
                             with col1: #Foto
@@ -158,24 +194,23 @@ with col2: #Informações
                                     # Garante que o analista não seja mostrado
                                     st.session_state[f'show_analista_{dados.id}'] = False
                                 
-                            # Mostrar a mensagem se o estado for True
+                            # Mostrar a mensagem se o botão de informações for pressionado
                             if st.session_state.get(f'show_msg_{dados.id}', False):
                                 st.info(dados.analista_info)
 
-                            # Mostrar a fonte da informação se o estado for True
+                            # Mostrar a fonte da informação se o botão for pressionado
                             if st.session_state.get(f'show_fonte_{dados.id}', False):
                                 st.info(dados.fonte)
                             
                             st.markdown("---")  # Separador entre registros
-                
-                else:
-                    st.info("Até o momento, nenhuma liderança cadastrada para esta cidade.")
+            
             else:
-                st.warning("Clique dentro de uma cidade válida.")
+                st.info("Até o momento, nenhuma liderança cadastrada para esta cidade.")
 
     except Exception as e:
         print(f"Ocorreu um erro: {e}")
 
 # Rodapé
 st.write("---")
+
 st.write("**Network URL**: http://10.10.9.182:8503 | **Usuário:** DIP | **Setor:** DEPARTAMENTO DE INTELIGÊNCIA POLICIAL")
