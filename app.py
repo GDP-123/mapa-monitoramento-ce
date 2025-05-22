@@ -119,7 +119,7 @@ with col2: #Informações
                         liderancas_filtradas = liderancas_filtradas.sort_values(by='nome')
 
                         docx = gerar_documento(
-                            modelo_path='Modelo/Modelo.docx',
+                            modelo_path='Modelo.docx',
                             regiao=clicked_city.title(),
                             dados_tabela=liderancas_filtradas
                         )
